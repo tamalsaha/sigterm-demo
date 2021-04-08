@@ -4,8 +4,8 @@ set -x
 
 _term() {
   echo "Caught SIGTERM signal!"
-  kill -9 "$child" 2>/dev/null
-  wait "$child"
+  # kill -15 "$child" 2>/dev/null
+  # wait "$child"
   echo "script terminating"
 }
 

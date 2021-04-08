@@ -10,7 +10,7 @@ import (
 	"syscall"
 )
 
-var shutdownSignals = []os.Signal{os.Interrupt, syscall.SIGTERM}
+var shutdownSignals = []os.Signal{syscall.SIGTERM}
 
 var onlyOneSignalHandler = make(chan struct{})
 var shutdownHandler chan os.Signal
@@ -78,14 +78,32 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	shutdownHandler = make(chan os.Signal, 2)
-	signal.Notify(shutdownHandler, shutdownSignals...)
+	shutdownHandler = make(chan os.Signal, 1)
+	signal.Notify(shutdownHandler, syscall.SIGTERM)
 	go func() {
 		<-shutdownHandler
-		fmt.Println("sending SIGTERM to", cmd.Process.Pid)
-		cmd.Process.Signal(syscall.SIGTERM)
+		fmt.Println("sending SIGTERM to", os.Getpid())
+
+		// cmd.Process.Signal(syscall.SIGTERM)
+
+		pgid, err := syscall.Getpgid(os.Getpid())
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("pgid", pgid)
+		syscall.Kill(-pgid, syscall.SIGTERM)
+
 		<-shutdownHandler
-		os.Exit(1) // second signal. Exit directly.
+		fmt.Println("waiting for everyone else to complete")
+
+		//
+		//
+		//sts, err := cmd.Process.Wait()
+		//if err != nil {
+		//	fmt.Println("err", err)
+		//} else {
+		//	fmt.Println("state: ", sts)
+		//}
 	}()
 
 	err := cmd.Start()
@@ -95,4 +113,9 @@ func main() {
 	log.Printf("Waiting for command to finish...")
 	err = cmd.Wait()
 	log.Printf("Command finished with error: %v", err)
+
+
+
+	fmt.Println("block until SIGKILL calls")
+	select{}
 }
