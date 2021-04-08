@@ -77,7 +77,6 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-
 	shutdownHandler = make(chan os.Signal, 2)
 	signal.Notify(shutdownHandler, shutdownSignals...)
 	go func() {
