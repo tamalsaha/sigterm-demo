@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	cmd := exec.Command("sleep", "3600")
+	cmd := exec.Command("./script.sh")
 	err := cmd.Start()
 	if err != nil {
 		log.Fatal(err)
