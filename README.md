@@ -17,10 +17,12 @@ The system call setpgid is used to set the process group ID of a process, thereb
 
 ## Foreground process from go binary -> script.sh -> test program (sleep)
 
+```
 2899232 2745605 2899232 2899232 bash
 2918303 2899232 2918303 2899232 sigterm-demo
 2918308 2918303 2918303 2899232 script.sh
 2918309 2918308 2918303 2899232 sleep
+```
 
 >> Bash does not pass SIGTERM
 
@@ -28,6 +30,7 @@ The system call setpgid is used to set the process group ID of a process, thereb
 
 ref: https://unix.stackexchange.com/a/362566
 
+```
 $ ps  xao pid,ppid,pgid,sid,comm | grep 2899232
 2899232 2745605 2899232 2899232 bash
 2918470 2899232 2918470 2899232 sigterm-demo
@@ -39,11 +42,13 @@ $ ps  xao pid,ppid,pgid,sid,comm | grep 2899232
 $ ps  xao pid,ppid,pgid,sid,comm | grep 2899232
 2899232 2745605 2899232 2899232 bash
 2918476       1 2918470 2899232 sleep
+```
 
 ## Background process (SIGTERM)
 
 ref: https://www.linuxcertified.com/e-learning/linuxplus/html/5_7.html
 
+```
 $ ps  xao pid,ppid,pgid,sid,comm | grep 2899232
 2899232 2745605 2899232 2899232 bash
 2919145 2899232 2919145 2899232 sigterm-demo
@@ -63,6 +68,7 @@ $ kill -15 2919150
 
 $ ps  xao pid,ppid,pgid,sid,comm | grep 2899232
 2899232 2745605 2899232 2899232 bash
+```
 
 >> Looks like SIGTERM not getting forwarded from `sigterm-demo` to `script.sh`
 
