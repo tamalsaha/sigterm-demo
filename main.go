@@ -73,7 +73,8 @@ func main_does_not_forward_SIGTERM_to_bash() {
 }
 
 func main() {
-	cmd := exec.Command("./script.sh")
+	// cmd := exec.Command("./script.sh")
+	cmd := exec.Command("bash", "-c", "./script.sh")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
