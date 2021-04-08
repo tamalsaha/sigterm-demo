@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -57,12 +58,36 @@ func RequestShutdown() bool {
 	return false
 }
 
-func main() {
-	SetupSignalHandler()
-
+// initial implementation
+func main_does_not_forward_SIGTERM_to_bash() {
 	cmd := exec.Command("./script.sh")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	err := cmd.Start()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Waiting for command to finish...")
+	err = cmd.Wait()
+	log.Printf("Command finished with error: %v", err)
+}
+
+func main() {
+	cmd := exec.Command("./script.sh")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+
+	shutdownHandler = make(chan os.Signal, 2)
+	signal.Notify(shutdownHandler, shutdownSignals...)
+	go func() {
+		<-shutdownHandler
+		fmt.Println("sending SIGTERM to", cmd.Process.Pid)
+		cmd.Process.Signal(syscall.SIGTERM)
+		<-shutdownHandler
+		os.Exit(1) // second signal. Exit directly.
+	}()
+
 	err := cmd.Start()
 	if err != nil {
 		log.Fatal(err)
