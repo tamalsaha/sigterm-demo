@@ -2,11 +2,14 @@ package main
 
 import (
 	"log"
+	"os"
 	"os/exec"
 )
 
 func main() {
 	cmd := exec.Command("./script.sh")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err := cmd.Start()
 	if err != nil {
 		log.Fatal(err)

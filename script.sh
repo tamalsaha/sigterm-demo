@@ -1,8 +1,12 @@
 #!/bin/bash
 
+set -x
+
 _term() {
   echo "Caught SIGTERM signal!"
-  kill -TERM "$child" 2>/dev/null
+  kill -9 "$child" 2>/dev/null
+  wait "$child"
+  echo "script terminating"
 }
 
 trap _term SIGTERM

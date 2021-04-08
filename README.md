@@ -13,3 +13,54 @@ The system call setsid is used to create a new session containing a single (new)
 The system call setpgid is used to set the process group ID of a process, thereby either joining the process to an existing process group, or creating a new process group within the session of the process with the process becoming the process group leader of the newly created group. POSIX prohibits the re-use of a process ID where a process group with that identifier still exists (i. e. where the leader of a process group has exited, but other processes in the group still exist). It thereby guarantees that processes may not accidentally become process group leaders.
 
 **The system call kill is capable of directing signals either to individual processes or to process groups.**
+
+
+## Foreground process from go binary -> script.sh -> test program (sleep)
+
+2899232 2745605 2899232 2899232 bash
+2918303 2899232 2918303 2899232 sigterm-demo
+2918308 2918303 2918303 2899232 script.sh
+2918309 2918308 2918303 2899232 sleep
+
+## Background process (SIGINT or Ctrl+C)
+
+ref: https://unix.stackexchange.com/a/362566
+
+$ ps  xao pid,ppid,pgid,sid,comm | grep 2899232
+2899232 2745605 2899232 2899232 bash
+2918470 2899232 2918470 2899232 sigterm-demo
+2918475 2918470 2918470 2899232 script.sh
+2918476 2918475 2918470 2899232 sleep
+
+# Hit ctrl+C in keyword (SIGINT)
+
+$ ps  xao pid,ppid,pgid,sid,comm | grep 2899232
+2899232 2745605 2899232 2899232 bash
+2918476       1 2918470 2899232 sleep
+
+## Background process (SIGTERM)
+
+ref: https://www.linuxcertified.com/e-learning/linuxplus/html/5_7.html
+
+$ ps  xao pid,ppid,pgid,sid,comm | grep 2899232
+2899232 2745605 2899232 2899232 bash
+2919145 2899232 2919145 2899232 sigterm-demo
+2919150 2919145 2919145 2899232 script.sh
+2919151 2919150 2919145 2899232 sleep
+
+# SIGTERM to sigterm-demo
+kill -15 2919145
+
+$ ps  xao pid,ppid,pgid,sid,comm | grep 2899232
+2899232 2745605 2899232 2899232 bash
+2919150       1 2919145 2899232 script.sh
+2919151 2919150 2919145 2899232 sleep
+
+# SIGTERM to script.sh
+$ kill -15 2919150
+
+$ ps  xao pid,ppid,pgid,sid,comm | grep 2899232
+2899232 2745605 2899232 2899232 bash
+
+>> Looks like SIGTERM not getting forwarded from `sigterm-demo` to `script.sh`
+>> Should `sigterm-demo` block for child processes to exit
