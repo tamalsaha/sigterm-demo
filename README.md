@@ -22,6 +22,8 @@ The system call setpgid is used to set the process group ID of a process, thereb
 2918308 2918303 2918303 2899232 script.sh
 2918309 2918308 2918303 2899232 sleep
 
+>> Bash does not pass SIGTERM
+
 ## Background process (SIGINT or Ctrl+C)
 
 ref: https://unix.stackexchange.com/a/362566
