@@ -65,4 +65,5 @@ $ ps  xao pid,ppid,pgid,sid,comm | grep 2899232
 2899232 2745605 2899232 2899232 bash
 
 >> Looks like SIGTERM not getting forwarded from `sigterm-demo` to `script.sh`
+
 >> Should `sigterm-demo` block for child processes to exit
