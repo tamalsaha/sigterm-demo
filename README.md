@@ -1,5 +1,9 @@
 # sigterm-demo
 
+- https://github.com/tamalsaha/learn-bash/issues/31
+- https://github.com/appscode/discuss/issues/393
+
+
 https://en.wikipedia.org/wiki/Process_group
 
 In a POSIX-conformant operating system, **a process group denotes a collection of one or more processes.** Among other things, a process group is used to control the distribution of a signal; **when a signal is directed to a process group, the signal is delivered to each process that is a member of the group.**
